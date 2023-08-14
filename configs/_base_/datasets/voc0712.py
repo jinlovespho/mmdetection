@@ -2,7 +2,7 @@
 dataset_type = 'VOCDataset'
 data_root = '/mnt/ssd2/dataset/pascal_voc/VOCdevkit/'
 train_batch_size=4
-val_batch_size=4
+val_batch_size=2
 
 # Example to use different file client
 # Method 1: simply set the data root and let the file I/O module

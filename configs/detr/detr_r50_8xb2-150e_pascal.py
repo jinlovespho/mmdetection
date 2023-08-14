@@ -2,9 +2,9 @@ _base_ = [
     '../_base_/datasets/voc0712.py', '../_base_/default_runtime.py'
 ]
 
-max_epochs = 50
-encoder_layers = 1
-decoder_layers = 1
+max_epochs = 300
+encoder_layers = 6
+decoder_layers = 6
 
 
 model = dict(
@@ -30,7 +30,7 @@ model = dict(
         type='ChannelMapper',
         in_channels=[2048],
         kernel_size=1,
-        out_channels=256,        # 256 -> 128 -> 64
+        out_channels=128,        # 256 -> 128 -> 64
         act_cfg=None,
         norm_cfg=None,
         num_outs=1),
@@ -38,12 +38,12 @@ model = dict(
         num_layers=encoder_layers,
         layer_cfg=dict(  # DetrTransformerEncoderLayer
             self_attn_cfg=dict(  # MultiheadAttention
-                embed_dims=256,           # 256 -> 128 -> 64
+                embed_dims=128,           # 256 -> 128 -> 64
                 num_heads=8,
                 dropout=0.1,
                 batch_first=True),
             ffn_cfg=dict(
-                embed_dims=256,           # 256 -> 128 -> 64
+                embed_dims=128,           # 256 -> 128 -> 64
                 feedforward_channels=2048,
                 num_fcs=2,
                 ffn_drop=0.1,
@@ -52,27 +52,27 @@ model = dict(
         num_layers=decoder_layers,
         layer_cfg=dict(  # DetrTransformerDecoderLayer
             self_attn_cfg=dict(  # MultiheadAttention
-                embed_dims=256,          # 256 -> 128 -> 64          
+                embed_dims=128,          # 256 -> 128 -> 64          
                 num_heads=8,
                 dropout=0.1,
                 batch_first=True),
             cross_attn_cfg=dict(  # MultiheadAttention
-                embed_dims=256,          # 256 -> 128 -> 64
+                embed_dims=128,          # 256 -> 128 -> 64
                 num_heads=8,
                 dropout=0.1,
                 batch_first=True),
             ffn_cfg=dict(
-                embed_dims=256,          # 256 -> 128 -> 64
+                embed_dims=128,          # 256 -> 128 -> 64
                 feedforward_channels=2048,
                 num_fcs=2,
                 ffn_drop=0.1,
                 act_cfg=dict(type='ReLU', inplace=True))),
         return_intermediate=True),
-    positional_encoding=dict(num_feats=128, normalize=True),     # 128 -> 64 -> 32
+    positional_encoding=dict(num_feats=64, normalize=True),     # 128 -> 64 -> 32
     bbox_head=dict(
         type='DETRHead',
         num_classes=20,          # pascal classes 80 -> 20
-        embed_dims=256,          # 256 -> 128 -> 64
+        embed_dims=128,          # 256 -> 128 -> 64
         loss_cls=dict(
             type='CrossEntropyLoss',
             bg_cls_weight=0.1,

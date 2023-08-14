@@ -1,6 +1,6 @@
-wandb_path = '/home/kwangrok/Downloads/VS_CODE/my_github/mmdetection/tools/my_script/detr/train/wandb_results/detr_local'
-wandb_project_name = 'detr_local'
-wandb_run_name = 'epoch50_train4_val4_enc1_dec1'
+wandb_path = '/home/kwangrok/Downloads/VS_CODE/my_github/mmdetection/tools/my_script/detr/train/wandb_results/detr'
+wandb_project_name = 'LOCAL_detr_hdim_study'
+wandb_run_name = 'epoch300_train4_val2_enc6_dec6_hdim128'
 
 
 default_scope = 'mmdet'

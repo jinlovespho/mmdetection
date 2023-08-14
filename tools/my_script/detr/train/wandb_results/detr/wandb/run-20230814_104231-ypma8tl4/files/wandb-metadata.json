@@ -1,0 +1,130 @@
+{
+    "os": "Linux-5.15.0-78-generic-x86_64-with-glibc2.31",
+    "python": "3.9.17",
+    "heartbeatAt": "2023-08-14T01:42:32.403555",
+    "startedAt": "2023-08-14T01:42:31.782141",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--config",
+        "/home/kwangrok/Downloads/VS_CODE/my_github/mmdetection/configs/detr/detr_r50_8xb2-150e_pascal.py",
+        "--work-dir",
+        "./train_results/20230813/epoch300_train4_val2_enc6_dec6_hdim64"
+    ],
+    "state": "running",
+    "program": "/home/kwangrok/Downloads/VS_CODE/my_github/mmdetection/tools/train.py",
+    "codePath": "tools/train.py",
+    "git": {
+        "remote": "https://github.com/jinlovespho/mmdetection.git",
+        "commit": "037c4d454e972f7b2557dc03e03885b4fb6ca6fa"
+    },
+    "email": "msjchr922@gmail.com",
+    "root": "/home/kwangrok/Downloads/VS_CODE/my_github/mmdetection",
+    "host": "jinlovespho",
+    "username": "kwangrok",
+    "executable": "/home/kwangrok/anaconda3/envs/mm_torch113/bin/python",
+    "cpu_count": 8,
+    "cpu_count_logical": 16,
+    "cpu_freq": {
+        "current": 3421.6166875000004,
+        "min": 800.0,
+        "max": 4800.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 4240.465,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2900.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2900.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2900.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2900.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2900.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2900.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 4600.002,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2900.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 4179.825,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2900.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 3525.586,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 4599.989,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 4600.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2900.0,
+            "min": 800.0,
+            "max": 4800.0
+        },
+        {
+            "current": 2900.0,
+            "min": 800.0,
+            "max": 4800.0
+        }
+    ],
+    "disk": {
+        "total": 456.8854446411133,
+        "used": 335.75364685058594
+    },
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3090",
+            "memory_total": 25769803776
+        }
+    ],
+    "memory": {
+        "total": 31.25707244873047
+    }
+}

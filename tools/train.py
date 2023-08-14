@@ -25,6 +25,10 @@ def parse_args():
         '--auto-scale-lr',
         action='store_true',
         help='enable automatically scaling LR.')
+    
+    # nargs로 받는 인자들은 list [] 형태로 저장된다.
+    # 즉 nargs='+' 일 때 --str_list jin loves pho를 하면 ['jin', 'loves', 'pho' ]가 들어간다
+    # 이렇게 넣어줄 수도 있네. --str_list jin=hi loves=bye 하면 ['jin=hi', 'loves=bye'] 처럼 들어간다.
     parser.add_argument(
         '--resume',
         nargs='?',
