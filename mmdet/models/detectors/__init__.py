@@ -57,6 +57,8 @@ from .yolo import YOLOV3
 from .yolof import YOLOF
 from .yolox import YOLOX
 
+from .detr_sparse import DETR_SPARSE 
+
 __all__ = [
     'ATSS', 'BaseDetector', 'SingleStageDetector', 'TwoStageDetector', 'RPN',
     'KnowledgeDistillationSingleStageDetector', 'FastRCNN', 'FasterRCNN',
@@ -68,5 +70,6 @@ __all__ = [
     'TwoStagePanopticSegmentor', 'PanopticFPN', 'QueryInst', 'LAD', 'TOOD',
     'MaskFormer', 'DDOD', 'Mask2Former', 'SemiBaseDetector', 'SoftTeacher',
     'RTMDet', 'Detectron2Wrapper', 'CrowdDet', 'CondInst', 'BoxInst',
-    'DetectionTransformer', 'ConditionalDETR', 'DINO', 'DABDETR', 'GLIP'
+    'DetectionTransformer', 'ConditionalDETR', 'DINO', 'DABDETR', 'GLIP',
+    'DETR_SPARSE'
 ]

@@ -47,7 +47,7 @@ def nchw_to_nlc(x):
 
 
 def coordinate_to_encoding(coord_tensor: Tensor,
-                           num_feats: int = 64,            # JINLOVESPHO LOCAL 128-> 64  
+                           num_feats: int = 128,            # JINLOVESPHO LOCAL 128-> 64  
                            temperature: int = 10000,
                            scale: float = 2 * math.pi):
     """Convert coordinate tensor to positional encoding.

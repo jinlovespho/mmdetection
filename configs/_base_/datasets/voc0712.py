@@ -19,40 +19,40 @@ val_batch_size=2
 #     }))
 backend_args = None
 
-train_pipeline = [
-    dict(type='LoadImageFromFile', backend_args=backend_args),
-    dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize', scale=(1000, 600), keep_ratio=True),
-    dict(type='RandomFlip', prob=0.5),
-    dict(type='PackDetInputs')
-    
+
+train_pipeline = [                                                  # 다음과 같이 dictionary 꼴로 저장 돼 O
+    dict(type='LoadImageFromFile', backend_args=backend_args),      # train_pipeline[0] = {'type':'LoadImageFromFile', 'backend_args':None }
+    dict(type='LoadAnnotations', with_bbox=True),                   # train_pipeline[1] = {'type':'LoadAnnotations', 'with_bbox':True}
+    dict(type='Resize', scale=(1000, 600), keep_ratio=True),        # train_pipeline[2] = {'type':'Resize', 'scale':()}
+    dict(type='RandomFlip', prob=0.5),                              # {'type':'RandomFlip', 'prob':0.5 }
+    dict(type='PackDetInputs'),                                      # {'type':'PackDetInputs' }
 ]
 test_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='Resize', scale=(1000, 600), keep_ratio=True),
     # avoid bboxes being resized
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(
+    dict(                                                   # {'type':'PackDetInputs', 'meta_keys':('img_id', . . .)}
         type='PackDetInputs',
         meta_keys=('img_id', 'img_path', 'ori_shape', 'img_shape', 'scale_factor')
         )
 ]
 
 
-train_dataloader = dict(
-    batch_size=train_batch_size,
-    num_workers=4,
+train_dataloader = dict(                # { 'batch_size':train_batch_size, 'num_workers':4, 'persistent_workers':True,  
+    batch_size=train_batch_size,        #    'sampler':{ 'type':'DefaultSampler', 'shuffle':True}, 'batch_sampler':{ 'type':'AspectRationBachSampler} ,
+    num_workers=4,                      #    'dataset': {'type':dataset_type', 'data_root':data_root, 'ann_file': ~}
     persistent_workers=True,
     sampler=dict(type='DefaultSampler', shuffle=True),
     batch_sampler=dict(type='AspectRatioBatchSampler'),
-    dataset=dict(
+    dataset=dict(                       # train-dataloader안에서 dataset을 불러온다
         type=dataset_type,
         data_root=data_root,
         ann_file='VOC2012/ImageSets/Main/train.txt',
         data_prefix=dict(sub_data_root='VOC2012/'),
         filter_cfg=dict(
             filter_empty_gt=True, min_size=32, bbox_min_size=32),
-        pipeline=train_pipeline,
+        pipeline=train_pipeline,                # train_dataloader의 pipeline에 train_pipeline을 받네, 즉 train_dataloader만 봐도 다 알 수 O
         backend_args=backend_args
             ))
 
@@ -111,7 +111,7 @@ train_dataloader = dict(
 # test_dataloader = val_dataloader
 
 
-val_dataloader = dict(
+val_dataloader = dict(              # val_dataloader.keys() => ['batch_size', 'num_workers', 'persistent_workers', . . , 'dataset' ]
     batch_size=val_batch_size,
     num_workers=4,
     persistent_workers=True,
@@ -125,9 +125,10 @@ val_dataloader = dict(
         test_mode=True,
         pipeline=test_pipeline,
         backend_args=backend_args))
-test_dataloader = val_dataloader
+test_dataloader = val_dataloader         # test_dataloader도 val_dataloader와 동일!
+
 
 # Pascal VOC2007 uses `11points` as default evaluate mode, while PASCAL
 # VOC2012 defaults to use 'area'.
-val_evaluator = dict(type='VOCMetric', metric='mAP', eval_mode='11points')
+val_evaluator = dict(type='VOCMetric', metric='mAP', eval_mode='11points')      # val_evaluator = { 'type':'VOCMetric', 'metric':'mAP', 'eval_mode':'11points' }
 test_evaluator = val_evaluator

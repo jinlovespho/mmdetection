@@ -3,13 +3,18 @@ _base_ = [
 ]
 
 max_epochs = 300
-encoder_layers = 6
+encoder_layers = 3
 decoder_layers = 6
+embed_dim=256
+num_queries=150
+
+learning_rate = 0.0001 
+weight_decay = 0.0001
 
 
 model = dict(
     type='DETR',
-    num_queries=100,
+    num_queries=num_queries,
     data_preprocessor=dict(
         type='DetDataPreprocessor',
         mean=[123.675, 116.28, 103.53],
@@ -30,49 +35,51 @@ model = dict(
         type='ChannelMapper',
         in_channels=[2048],
         kernel_size=1,
-        out_channels=128,        # 256 -> 128 -> 64
+        out_channels=embed_dim,        # 256 -> 128 -> 64
         act_cfg=None,
         norm_cfg=None,
         num_outs=1),
+    
     encoder=dict(  # DetrTransformerEncoder
         num_layers=encoder_layers,
         layer_cfg=dict(  # DetrTransformerEncoderLayer
             self_attn_cfg=dict(  # MultiheadAttention
-                embed_dims=128,           # 256 -> 128 -> 64
+                embed_dims=embed_dim,           # 256 -> 128 -> 64
                 num_heads=8,
                 dropout=0.1,
                 batch_first=True),
             ffn_cfg=dict(
-                embed_dims=128,           # 256 -> 128 -> 64
+                embed_dims=embed_dim,           # 256 -> 128 -> 64
                 feedforward_channels=2048,
                 num_fcs=2,
                 ffn_drop=0.1,
                 act_cfg=dict(type='ReLU', inplace=True)))),
+    
     decoder=dict(  # DetrTransformerDecoder
         num_layers=decoder_layers,
         layer_cfg=dict(  # DetrTransformerDecoderLayer
             self_attn_cfg=dict(  # MultiheadAttention
-                embed_dims=128,          # 256 -> 128 -> 64          
+                embed_dims=embed_dim,          # 256 -> 128 -> 64          
                 num_heads=8,
                 dropout=0.1,
                 batch_first=True),
             cross_attn_cfg=dict(  # MultiheadAttention
-                embed_dims=128,          # 256 -> 128 -> 64
+                embed_dims=embed_dim,          # 256 -> 128 -> 64
                 num_heads=8,
                 dropout=0.1,
                 batch_first=True),
             ffn_cfg=dict(
-                embed_dims=128,          # 256 -> 128 -> 64
+                embed_dims=embed_dim,          # 256 -> 128 -> 64
                 feedforward_channels=2048,
                 num_fcs=2,
                 ffn_drop=0.1,
                 act_cfg=dict(type='ReLU', inplace=True))),
         return_intermediate=True),
-    positional_encoding=dict(num_feats=64, normalize=True),     # 128 -> 64 -> 32
+    positional_encoding=dict(num_feats=(embed_dim/2), normalize=True),     # 128 -> 64 -> 32
     bbox_head=dict(
         type='DETRHead',
         num_classes=20,          # pascal classes 80 -> 20
-        embed_dims=128,          # 256 -> 128 -> 64
+        embed_dims=embed_dim,          # 256 -> 128 -> 64
         loss_cls=dict(
             type='CrossEntropyLoss',
             bg_cls_weight=0.1,
@@ -97,9 +104,9 @@ model = dict(
 train_pipeline = [
     dict(type='LoadImageFromFile', backend_args={{_base_.backend_args}}),
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='RandomFlip', prob=0.5),
+    dict(type='RandomFlip', prob=0.5),                                      # {'type':'RandomFlip', 'prob':0.5 }
     dict(
-        type='RandomChoice',
+        type='RandomChoice',                # { 'type':'RandomChoice', 'transforms':[ [{'type':'RandomChoiceResize', 'scales':[ ], 'keep_ratio':True}],    }           ]}
         transforms=[[
             dict(
                 type='RandomChoiceResize',
@@ -126,25 +133,29 @@ train_pipeline = [
                                     (768, 1333), (800, 1333)],
                             keep_ratio=True)
                     ]]),
-    dict(type='PackDetInputs')
+    dict(type='PackDetInputs'),
+                                # 위에서 voc0712.py -> detr_r50~.py가 호출되기에, 'my_test':'jinlovespho'에서 'my_test':'jinloveshyun'으로 덮어씌워진다.
 ]
-train_dataloader = dict(dataset=dict(pipeline=train_pipeline))
+train_dataloader = dict(dataset=dict(pipeline=train_pipeline))      
 
 # optimizer
-optim_wrapper = dict(
+optim_wrapper = dict(           # optim_wrapper = { 'type':'OptimeWrapper', 'optimizer':{'type':'AdamW', 'lr':learning_rate, 'weight_decay':weight_decay}, 'clip_grad': {}, ~ }
     type='OptimWrapper',
-    optimizer=dict(type='AdamW', lr=0.0001, weight_decay=0.0001),
+    optimizer=dict(type='AdamW', lr=learning_rate, weight_decay=weight_decay),
     clip_grad=dict(max_norm=0.1, norm_type=2),
     paramwise_cfg=dict(
         custom_keys={'backbone': dict(lr_mult=0.1, decay_mult=1.0)}))
 
 # learning policy
-train_cfg = dict(
-    type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=1)
-val_cfg = dict(type='ValLoop')
-test_cfg = dict(type='TestLoop')
+train_cfg = dict(           # train_cfg = {'type':'EpochBasedTrainLoop', 'max_epochs':max_epochs, 'val_interval':1 }
+    type='EpochBasedTrainLoop', 
+    max_epochs=max_epochs, 
+    val_interval=1)
 
-param_scheduler = [
+val_cfg = dict(type='ValLoop')      # val_cfg = {'type':'ValLoop' }
+test_cfg = dict(type='TestLoop')    # test_cfg = {'type':'Testloop' }
+
+param_scheduler = [                 # param_scheduler = [ {'type':'MultiStepLR', 'begin':0, ... , 'gamma':0.1}  ]
     dict(
         type='MultiStepLR',
         begin=0,
@@ -157,4 +168,4 @@ param_scheduler = [
 # NOTE: `auto_scale_lr` is for automatically scaling LR,
 # USER SHOULD NOT CHANGE ITS VALUES.
 # base_batch_size = (8 GPUs) x (2 samples per GPU)
-auto_scale_lr = dict(base_batch_size=16)
+auto_scale_lr = dict(base_batch_size=16)                    # cfg.auto_scale_lr = { 'base_batch_size':16 }

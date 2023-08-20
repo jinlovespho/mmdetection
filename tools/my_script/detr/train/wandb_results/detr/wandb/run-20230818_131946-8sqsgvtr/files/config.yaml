@@ -1,0 +1,593 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    python_version: 3.9.17
+    cli_version: 0.15.8
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1692332386.131054
+    t:
+      1:
+      - 1
+      - 37
+      - 38
+      - 41
+      - 55
+      - 82
+      2:
+      - 1
+      - 37
+      - 38
+      - 41
+      - 55
+      - 82
+      3:
+      - 13
+      - 23
+      4: 3.9.17
+      5: 0.15.8
+      8:
+      - 5
+dataset_type:
+  desc: null
+  value: VOCDataset
+data_root:
+  desc: null
+  value: /mnt/ssd2/dataset/pascal_voc/VOCdevkit/
+train_batch_size:
+  desc: null
+  value: 4
+val_batch_size:
+  desc: null
+  value: 2
+backend_args:
+  desc: null
+  value: null
+train_pipeline:
+  desc: null
+  value:
+  - type: LoadImageFromFile
+    backend_args: null
+  - type: LoadAnnotations
+    with_bbox: true
+  - type: RandomFlip
+    prob: 0.5
+  - type: RandomChoice
+    transforms:
+    - - type: RandomChoiceResize
+        scales:
+        - - 480
+          - 1333
+        - - 512
+          - 1333
+        - - 544
+          - 1333
+        - - 576
+          - 1333
+        - - 608
+          - 1333
+        - - 640
+          - 1333
+        - - 672
+          - 1333
+        - - 704
+          - 1333
+        - - 736
+          - 1333
+        - - 768
+          - 1333
+        - - 800
+          - 1333
+        keep_ratio: true
+    - - type: RandomChoiceResize
+        scales:
+        - - 400
+          - 1333
+        - - 500
+          - 1333
+        - - 600
+          - 1333
+        keep_ratio: true
+      - type: RandomCrop
+        crop_type: absolute_range
+        crop_size:
+        - 384
+        - 600
+        allow_negative_crop: true
+      - type: RandomChoiceResize
+        scales:
+        - - 480
+          - 1333
+        - - 512
+          - 1333
+        - - 544
+          - 1333
+        - - 576
+          - 1333
+        - - 608
+          - 1333
+        - - 640
+          - 1333
+        - - 672
+          - 1333
+        - - 704
+          - 1333
+        - - 736
+          - 1333
+        - - 768
+          - 1333
+        - - 800
+          - 1333
+        keep_ratio: true
+  - type: PackDetInputs
+  - my_test: jinloveshyun
+test_pipeline:
+  desc: null
+  value:
+  - type: LoadImageFromFile
+    backend_args: null
+  - type: Resize
+    scale:
+    - 1000
+    - 600
+    keep_ratio: true
+  - type: LoadAnnotations
+    with_bbox: true
+  - type: PackDetInputs
+    meta_keys:
+    - img_id
+    - img_path
+    - ori_shape
+    - img_shape
+    - scale_factor
+train_dataloader:
+  desc: null
+  value:
+    batch_size: 4
+    num_workers: 4
+    persistent_workers: true
+    sampler:
+      type: DefaultSampler
+      shuffle: true
+    batch_sampler:
+      type: AspectRatioBatchSampler
+    dataset:
+      type: VOCDataset
+      data_root: /mnt/ssd2/dataset/pascal_voc/VOCdevkit/
+      ann_file: VOC2012/ImageSets/Main/train.txt
+      data_prefix:
+        sub_data_root: VOC2012/
+      filter_cfg:
+        filter_empty_gt: true
+        min_size: 32
+        bbox_min_size: 32
+      pipeline:
+      - type: LoadImageFromFile
+        backend_args: null
+      - type: LoadAnnotations
+        with_bbox: true
+      - type: RandomFlip
+        prob: 0.5
+      - type: RandomChoice
+        transforms:
+        - - type: RandomChoiceResize
+            scales:
+            - - 480
+              - 1333
+            - - 512
+              - 1333
+            - - 544
+              - 1333
+            - - 576
+              - 1333
+            - - 608
+              - 1333
+            - - 640
+              - 1333
+            - - 672
+              - 1333
+            - - 704
+              - 1333
+            - - 736
+              - 1333
+            - - 768
+              - 1333
+            - - 800
+              - 1333
+            keep_ratio: true
+        - - type: RandomChoiceResize
+            scales:
+            - - 400
+              - 1333
+            - - 500
+              - 1333
+            - - 600
+              - 1333
+            keep_ratio: true
+          - type: RandomCrop
+            crop_type: absolute_range
+            crop_size:
+            - 384
+            - 600
+            allow_negative_crop: true
+          - type: RandomChoiceResize
+            scales:
+            - - 480
+              - 1333
+            - - 512
+              - 1333
+            - - 544
+              - 1333
+            - - 576
+              - 1333
+            - - 608
+              - 1333
+            - - 640
+              - 1333
+            - - 672
+              - 1333
+            - - 704
+              - 1333
+            - - 736
+              - 1333
+            - - 768
+              - 1333
+            - - 800
+              - 1333
+            keep_ratio: true
+      - type: PackDetInputs
+      - my_test: jinloveshyun
+      backend_args: null
+val_dataloader:
+  desc: null
+  value:
+    batch_size: 2
+    num_workers: 4
+    persistent_workers: true
+    drop_last: false
+    sampler:
+      type: DefaultSampler
+      shuffle: false
+    dataset:
+      type: VOCDataset
+      data_root: /mnt/ssd2/dataset/pascal_voc/VOCdevkit/
+      ann_file: VOC2012/ImageSets/Main/val.txt
+      data_prefix:
+        sub_data_root: VOC2012/
+      test_mode: true
+      pipeline:
+      - type: LoadImageFromFile
+        backend_args: null
+      - type: Resize
+        scale:
+        - 1000
+        - 600
+        keep_ratio: true
+      - type: LoadAnnotations
+        with_bbox: true
+      - type: PackDetInputs
+        meta_keys:
+        - img_id
+        - img_path
+        - ori_shape
+        - img_shape
+        - scale_factor
+      backend_args: null
+test_dataloader:
+  desc: null
+  value:
+    batch_size: 2
+    num_workers: 4
+    persistent_workers: true
+    drop_last: false
+    sampler:
+      type: DefaultSampler
+      shuffle: false
+    dataset:
+      type: VOCDataset
+      data_root: /mnt/ssd2/dataset/pascal_voc/VOCdevkit/
+      ann_file: VOC2012/ImageSets/Main/val.txt
+      data_prefix:
+        sub_data_root: VOC2012/
+      test_mode: true
+      pipeline:
+      - type: LoadImageFromFile
+        backend_args: null
+      - type: Resize
+        scale:
+        - 1000
+        - 600
+        keep_ratio: true
+      - type: LoadAnnotations
+        with_bbox: true
+      - type: PackDetInputs
+        meta_keys:
+        - img_id
+        - img_path
+        - ori_shape
+        - img_shape
+        - scale_factor
+      backend_args: null
+val_evaluator:
+  desc: null
+  value:
+    type: VOCMetric
+    metric: mAP
+    eval_mode: 11points
+test_evaluator:
+  desc: null
+  value:
+    type: VOCMetric
+    metric: mAP
+    eval_mode: 11points
+wandb_path:
+  desc: null
+  value: /home/kwangrok/Downloads/VS_CODE/my_github/mmdetection/tools/my_script/detr/train/wandb_results/detr
+wandb_project_name:
+  desc: null
+  value: LOCAL_detr_hdim_study
+wandb_run_name:
+  desc: null
+  value: epoch300_train4_val2_enc3_dec6_hdim256_query150
+default_scope:
+  desc: null
+  value: mmdet
+default_hooks:
+  desc: null
+  value:
+    timer:
+      type: IterTimerHook
+    logger:
+      type: LoggerHook
+      interval: 50
+    param_scheduler:
+      type: ParamSchedulerHook
+    checkpoint:
+      type: CheckpointHook
+      interval: 25
+    sampler_seed:
+      type: DistSamplerSeedHook
+    visualization:
+      type: DetVisualizationHook
+env_cfg:
+  desc: null
+  value:
+    cudnn_benchmark: false
+    mp_cfg:
+      mp_start_method: fork
+      opencv_num_threads: 0
+    dist_cfg:
+      backend: nccl
+vis_backends:
+  desc: null
+  value:
+  - type: LocalVisBackend
+  - type: WandbVisBackend
+    save_dir: /home/kwangrok/Downloads/VS_CODE/my_github/mmdetection/tools/my_script/detr/train/wandb_results/detr
+    init_kwargs:
+      project: LOCAL_detr_hdim_study
+      name: epoch300_train4_val2_enc3_dec6_hdim256_query150
+    define_metric_cfg: null
+    commit: true
+    log_code_name: null
+    watch_kwargs: null
+visualizer:
+  desc: null
+  value:
+    type: DetLocalVisualizer
+    vis_backends:
+    - type: LocalVisBackend
+    - type: WandbVisBackend
+      save_dir: /home/kwangrok/Downloads/VS_CODE/my_github/mmdetection/tools/my_script/detr/train/wandb_results/detr
+      init_kwargs:
+        project: LOCAL_detr_hdim_study
+        name: epoch300_train4_val2_enc3_dec6_hdim256_query150
+      define_metric_cfg: null
+      commit: true
+      log_code_name: null
+      watch_kwargs: null
+    name: visualizer
+log_processor:
+  desc: null
+  value:
+    type: LogProcessor
+    window_size: 50
+    by_epoch: true
+log_level:
+  desc: null
+  value: INFO
+load_from:
+  desc: null
+  value: null
+resume:
+  desc: null
+  value: false
+max_epochs:
+  desc: null
+  value: 300
+encoder_layers:
+  desc: null
+  value: 3
+decoder_layers:
+  desc: null
+  value: 6
+embed_dim:
+  desc: null
+  value: 256
+num_queries:
+  desc: null
+  value: 150
+learning_rate:
+  desc: null
+  value: 0.0001
+weight_decay:
+  desc: null
+  value: 0.0001
+model:
+  desc: null
+  value:
+    type: DETR
+    num_queries: 150
+    data_preprocessor:
+      type: DetDataPreprocessor
+      mean:
+      - 123.675
+      - 116.28
+      - 103.53
+      std:
+      - 58.395
+      - 57.12
+      - 57.375
+      bgr_to_rgb: true
+      pad_size_divisor: 1
+    backbone:
+      type: ResNet
+      depth: 50
+      num_stages: 4
+      out_indices:
+      - 3
+      frozen_stages: 1
+      norm_cfg:
+        type: BN
+        requires_grad: false
+      norm_eval: true
+      style: pytorch
+      init_cfg:
+        type: Pretrained
+        checkpoint: torchvision://resnet50
+    neck:
+      type: ChannelMapper
+      in_channels:
+      - 2048
+      kernel_size: 1
+      out_channels: 256
+      act_cfg: null
+      norm_cfg: null
+      num_outs: 1
+    encoder:
+      num_layers: 3
+      layer_cfg:
+        self_attn_cfg:
+          embed_dims: 256
+          num_heads: 8
+          dropout: 0.1
+          batch_first: true
+        ffn_cfg:
+          embed_dims: 256
+          feedforward_channels: 2048
+          num_fcs: 2
+          ffn_drop: 0.1
+          act_cfg:
+            type: ReLU
+            inplace: true
+    decoder:
+      num_layers: 6
+      layer_cfg:
+        self_attn_cfg:
+          embed_dims: 256
+          num_heads: 8
+          dropout: 0.1
+          batch_first: true
+        cross_attn_cfg:
+          embed_dims: 256
+          num_heads: 8
+          dropout: 0.1
+          batch_first: true
+        ffn_cfg:
+          embed_dims: 256
+          feedforward_channels: 2048
+          num_fcs: 2
+          ffn_drop: 0.1
+          act_cfg:
+            type: ReLU
+            inplace: true
+      return_intermediate: true
+    positional_encoding:
+      num_feats: 128.0
+      normalize: true
+    bbox_head:
+      type: DETRHead
+      num_classes: 20
+      embed_dims: 256
+      loss_cls:
+        type: CrossEntropyLoss
+        bg_cls_weight: 0.1
+        use_sigmoid: false
+        loss_weight: 1.0
+        class_weight: 1.0
+      loss_bbox:
+        type: L1Loss
+        loss_weight: 5.0
+      loss_iou:
+        type: GIoULoss
+        loss_weight: 2.0
+    train_cfg:
+      assigner:
+        type: HungarianAssigner
+        match_costs:
+        - type: ClassificationCost
+          weight: 1.0
+        - type: BBoxL1Cost
+          weight: 5.0
+          box_format: xywh
+        - type: IoUCost
+          iou_mode: giou
+          weight: 2.0
+    test_cfg:
+      max_per_img: 100
+optim_wrapper:
+  desc: null
+  value:
+    type: OptimWrapper
+    optimizer:
+      type: AdamW
+      lr: 0.0001
+      weight_decay: 0.0001
+    clip_grad:
+      max_norm: 0.1
+      norm_type: 2
+    paramwise_cfg:
+      custom_keys:
+        backbone:
+          lr_mult: 0.1
+          decay_mult: 1.0
+train_cfg:
+  desc: null
+  value:
+    type: EpochBasedTrainLoop
+    max_epochs: 300
+    val_interval: 1
+val_cfg:
+  desc: null
+  value:
+    type: ValLoop
+test_cfg:
+  desc: null
+  value:
+    type: TestLoop
+param_scheduler:
+  desc: null
+  value:
+  - type: MultiStepLR
+    begin: 0
+    end: 300
+    by_epoch: true
+    milestones:
+    - 100
+    gamma: 0.1
+auto_scale_lr:
+  desc: null
+  value:
+    base_batch_size: 16
+launcher:
+  desc: null
+  value: none
+this_is_added_to_cfg_keys:
+  desc: null
+  value: and_this_becomes_the_value
+work_dir:
+  desc: null
+  value: ./train_results/20230814/epoch300_train4_val2_enc3_dec6_hdim256_query150
