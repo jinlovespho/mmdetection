@@ -311,11 +311,11 @@ class ResultVisualizer:
 def parse_args():
     parser = argparse.ArgumentParser(
         description='MMDet eval image prediction result for each')
-    parser.add_argument('config', help='test config file path')
+    parser.add_argument('--config', help='test config file path')
     parser.add_argument(
-        'prediction_path', help='prediction path where test pkl result')
+        'prediction-path', help='prediction path where test pkl result')
     parser.add_argument(
-        'show_dir', help='directory where painted images will be saved')
+        'show-dir', help='directory where painted images will be saved')
     parser.add_argument('--show', action='store_true', help='show results')
     parser.add_argument(
         '--wait-time',

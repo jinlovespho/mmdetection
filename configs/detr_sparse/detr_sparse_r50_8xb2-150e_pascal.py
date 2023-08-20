@@ -3,10 +3,10 @@ _base_ = [
 ]
 
 max_epochs = 300
-encoder_layers = 1
-decoder_layers = 1
-embed_dim=64
-num_queries=100
+encoder_layers = 3
+decoder_layers = 6
+embed_dim=256    
+num_queries=150
 
 learning_rate = 0.0001 
 weight_decay = 0.0001

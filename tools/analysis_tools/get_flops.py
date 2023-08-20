@@ -23,7 +23,7 @@ except ImportError:
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Get a detector flops')
-    parser.add_argument('config', help='train config file path')
+    parser.add_argument('--config', help='train config file path')
     parser.add_argument(
         '--num-images',
         type=int,

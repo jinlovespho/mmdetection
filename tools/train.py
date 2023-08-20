@@ -129,6 +129,7 @@ def main():
         # if 'runner_type' is set in the cfg
         runner = RUNNERS.build(cfg)            # 여기가 실행 X
 
+    # breakpoint()
     # start training
     runner.train()
 

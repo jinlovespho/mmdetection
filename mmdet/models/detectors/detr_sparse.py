@@ -25,7 +25,7 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
 
     def _init_layers(self) -> None:
         """Initialize layers except for backbone, neck and bbox_head."""
-        breakpoint()
+        # breakpoint()
         self.positional_encoding = SinePositionalEncoding(
             **self.positional_encoding)
         self.encoder = DetrSparseTransformerEncoder(**self.encoder)
@@ -33,7 +33,8 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
         self.embed_dims = self.encoder.embed_dims
         # NOTE The embed_dims is typically passed from the inside out.
         # For example in DETR, The embed_dims is passed as
-        # self_attn -> the first encoder layer -> encoder -> detector.
+        # self_attn -> the first encoder layer 
+        # -> encoder -> detector.
         self.query_embedding = nn.Embedding(self.num_queries, self.embed_dims)
 
         num_feats = self.positional_encoding.num_feats
