@@ -122,7 +122,8 @@ def main():
 
     # build the runner from config  
     if 'runner_type' not in cfg:            # cfg 또는 cfg.keys() 둘다 상관 X. cfg.keys() 중에 'runner_type' 있는지 확인하는 문.
-        # build the default runner          
+        # build the default runner   
+        # breakpoint()       
         runner = Runner.from_cfg(cfg)       # cfg.keys()에 'runner_type'가 없기에 해당 if문 실행 O
     else:
         # build customized runner from the registry

@@ -3,8 +3,8 @@ _base_ = [
 ]
 
 max_epochs = 300
-encoder_layers = 3
-decoder_layers = 6
+encoder_layers = 2
+decoder_layers = 2
 embed_dim=256    
 num_queries=150
 

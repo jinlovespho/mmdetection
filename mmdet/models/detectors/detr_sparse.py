@@ -25,7 +25,6 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
 
     def _init_layers(self) -> None:
         """Initialize layers except for backbone, neck and bbox_head."""
-        # breakpoint()
         self.positional_encoding = SinePositionalEncoding(
             **self.positional_encoding)
         self.encoder = DetrSparseTransformerEncoder(**self.encoder)
@@ -135,7 +134,8 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
             dict: The dictionary of encoder outputs, which includes the
             `memory` of the encoder output.
         """
-        memory = self.encoder(
+        # breakpoint()
+        memory = self.encoder(                              # 여기서 DetrSparseTransformerEncoder속으로 들어가 O
             query=feat, query_pos=feat_pos,
             key_padding_mask=feat_mask)  # for self_attn
         encoder_outputs_dict = dict(memory=memory)

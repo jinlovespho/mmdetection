@@ -1,5 +1,5 @@
 wandb_path = '/home/kwangrok/Downloads/VS_CODE/my_github/mmdetection/tools/my_script/detr/train/wandb_results/detr'
-wandb_project_name = 'LOCAL_detr_hdim_study'
+wandb_project_name = 'LOCAL_detr_sparse_try'
 wandb_run_name = 'epoch300_train4_val2_enc3_dec6_hdim256_query150'
 
 

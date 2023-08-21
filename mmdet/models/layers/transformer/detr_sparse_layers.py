@@ -182,7 +182,7 @@ class DetrSparseTransformerEncoderLayer(BaseModule):
 
     def _init_layers(self) -> None:
         """Initialize self-attention, FFN, and normalization."""
-        self.self_attn = MultiheadAttention(**self.self_attn_cfg)
+        self.self_attn = MultiheadAttention(**self.self_attn_cfg)       
         self.embed_dims = self.self_attn.embed_dims
         self.ffn = FFN(**self.ffn_cfg)
         norms_list = [
@@ -204,7 +204,12 @@ class DetrSparseTransformerEncoderLayer(BaseModule):
         Returns:
             Tensor: forwarded results, has shape (bs, num_queries, dim).
         """
-        query = self.self_attn(
+        
+        print(' IN ENCODER LAYER FORWARDPASS ')
+        
+        breakpoint()
+        
+        query = self.self_attn(                     # self.self_attn은 MultiHeadAttention()이다.
             query=query,
             key=query,
             value=query,
@@ -330,6 +335,8 @@ class DetrSparseTransformerDecoderLayer(BaseModule):
             Tensor: forwarded results, has shape (bs, num_queries, dim).
         """
 
+        print(' IN DECODER LAYER FORWARDPASS ')
+        
         query = self.self_attn(
             query=query,
             key=query,
@@ -339,7 +346,7 @@ class DetrSparseTransformerDecoderLayer(BaseModule):
             attn_mask=self_attn_mask,
             **kwargs)
         query = self.norms[0](query)
-        query = self.cross_attn(
+        query = self.cross_attn(            # encoder layer과 다르게 decoder layer에는 cross_attn이 하나 추가 되어 있다.
             query=query,
             key=key,
             value=value,
