@@ -6,7 +6,7 @@ max_epochs = 300
 encoder_layers = 2
 decoder_layers = 2
 embed_dim=256    
-num_queries=150
+num_queries=100
 
 learning_rate = 0.0001 
 weight_decay = 0.0001

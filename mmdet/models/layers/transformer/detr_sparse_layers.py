@@ -11,6 +11,8 @@ from torch import Tensor
 from mmdet.utils import ConfigType, OptConfigType
 
 # JINLOVESPHO my detr sparse transformer !! lets implement! 
+from reformer_pytorch import *
+
 
 class DetrSparseTransformerEncoder(BaseModule):
     """Encoder of DETR.
@@ -182,6 +184,7 @@ class DetrSparseTransformerEncoderLayer(BaseModule):
 
     def _init_layers(self) -> None:
         """Initialize self-attention, FFN, and normalization."""
+        # breakpoint()
         self.self_attn = MultiheadAttention(**self.self_attn_cfg)       
         self.embed_dims = self.self_attn.embed_dims
         self.ffn = FFN(**self.ffn_cfg)
@@ -205,9 +208,9 @@ class DetrSparseTransformerEncoderLayer(BaseModule):
             Tensor: forwarded results, has shape (bs, num_queries, dim).
         """
         
-        print(' IN ENCODER LAYER FORWARDPASS ')
+        # print(' IN ENCODER LAYER FORWARDPASS ')
         
-        breakpoint()
+        # breakpoint()
         
         query = self.self_attn(                     # self.self_attn은 MultiHeadAttention()이다.
             query=query,
@@ -335,7 +338,7 @@ class DetrSparseTransformerDecoderLayer(BaseModule):
             Tensor: forwarded results, has shape (bs, num_queries, dim).
         """
 
-        print(' IN DECODER LAYER FORWARDPASS ')
+        # print(' IN DECODER LAYER FORWARDPASS ')
         
         query = self.self_attn(
             query=query,

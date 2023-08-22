@@ -128,9 +128,8 @@ def main():
     else:
         # build customized runner from the registry
         # if 'runner_type' is set in the cfg
-        runner = RUNNERS.build(cfg)            # 여기가 실행 X
-
-    # breakpoint()
+        runner = RUNNERS.build(cfg)            # 여기 실행 X
+        
     # start training
     runner.train()
 

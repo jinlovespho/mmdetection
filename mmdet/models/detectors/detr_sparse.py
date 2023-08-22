@@ -25,6 +25,7 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
 
     def _init_layers(self) -> None:
         """Initialize layers except for backbone, neck and bbox_head."""
+        # breakpoint()
         self.positional_encoding = SinePositionalEncoding(
             **self.positional_encoding)
         self.encoder = DetrSparseTransformerEncoder(**self.encoder)
@@ -80,34 +81,36 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
               and 'memory_pos'.
         """
 
-        feat = img_feats[-1]  # NOTE img_feats contains only one feature.
+        breakpoint()
+        feat = img_feats[-1]  # NOTE img_feats contains only one feature.       # feat.shape = (batch_size, feat_dim, fmap_h, fmap_w)
         batch_size, feat_dim, _, _ = feat.shape
         # construct binary masks which for the transformer.
-        assert batch_data_samples is not None
-        batch_input_shape = batch_data_samples[0].batch_input_shape
-        img_shape_list = [sample.img_shape for sample in batch_data_samples]
+        assert batch_data_samples is not None                                   # batch_data_samples[0].all_keys() 하면 정보 다 알 수 O           
+        batch_input_shape = batch_data_samples[0].batch_input_shape             # batch_input_shape가 뭐지..        
+        img_shape_list = [sample.img_shape for sample in batch_data_samples]    # img_shape은 original img_shape에서 scaling한 image shape을 의미 O
 
         input_img_h, input_img_w = batch_input_shape
-        masks = feat.new_ones((batch_size, input_img_h, input_img_w))
+        masks = feat.new_ones((batch_size, input_img_h, input_img_w))       # masks.shape = (batch_size, input_img_h, input_img_w) 만큼 전부 1로 채워져 O
         for img_id in range(batch_size):
             img_h, img_w = img_shape_list[img_id]
-            masks[img_id, :img_h, :img_w] = 0
+            masks[img_id, :img_h, :img_w] = 0                               # masks에서 img_h, img_w만큼은 0으로 채워 O
         # NOTE following the official DETR repo, non-zero values represent
-        # ignored positions, while zero values mean valid positions.
-
-        masks = F.interpolate(
+        # ignored positions, while zero values mean valid positions.        # 에 의하면 0 이 valid position을 의미한다고 하네! 
+                                                                            # masks.shape = (batch_size, (batch_input_shape) )
+        breakpoint()
+        masks = F.interpolate(                                              # 이걸 거치면 masks.shape = (batch_size, fmap_h, fmap_w )
             masks.unsqueeze(1), size=feat.shape[-2:]).to(torch.bool).squeeze(1)
         # [batch_size, embed_dim, h, w]
-        pos_embed = self.positional_encoding(masks)
+        pos_embed = self.positional_encoding(masks)                         # shape:(4,256,22,39)
 
         # use `view` instead of `flatten` for dynamically exporting to ONNX
-        # [bs, c, h, w] -> [bs, h*w, c]
-        feat = feat.view(batch_size, feat_dim, -1).permute(0, 2, 1)
+        # [bs, c, h, w] -> [bs, h*w, c]                                     # 아 여기가 transformer의 input으로 바꾸는 부분이구나
+        feat = feat.view(batch_size, feat_dim, -1).permute(0, 2, 1)         # feat.shape = (4, HW, c=d_model)
         pos_embed = pos_embed.view(batch_size, feat_dim, -1).permute(0, 2, 1)
         # [bs, h, w] -> [bs, h*w]
         masks = masks.view(batch_size, -1)
 
-        # prepare transformer_inputs_dict
+        # prepare transformer_inputs_dict       
         encoder_inputs_dict = dict(
             feat=feat, feat_mask=masks, feat_pos=pos_embed)
         decoder_inputs_dict = dict(memory_mask=masks, memory_pos=pos_embed)
@@ -136,8 +139,8 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
         """
         # breakpoint()
         memory = self.encoder(                              # 여기서 DetrSparseTransformerEncoder속으로 들어가 O
-            query=feat, query_pos=feat_pos,
-            key_padding_mask=feat_mask)  # for self_attn
+            query=feat, query_pos=feat_pos,                 # self이 model이므로. self.encoder은 model.encoder 즉 model에서 encoder부분에
+            key_padding_mask=feat_mask)  # for self_attn    # feat, feat_pos, feat_mask을 encoder의 input으로 넣어 준 것.
         encoder_outputs_dict = dict(memory=memory)
         return encoder_outputs_dict
 
@@ -167,14 +170,13 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
               support 'two stage' or 'query selection' strategies.
         """
 
-        batch_size = memory.size(0)  # (bs, num_feat_points, dim)
+        batch_size = memory.size(0)  # (bs, num_feat_points, dim)   # num_feat_poits = seq_len feel = HW 여기서는 HW에 해당 
         query_pos = self.query_embedding.weight
         # (num_queries, dim) -> (bs, num_queries, dim)
         query_pos = query_pos.unsqueeze(0).repeat(batch_size, 1, 1)
         query = torch.zeros_like(query_pos)
 
-        decoder_inputs_dict = dict(
-            query_pos=query_pos, query=query, memory=memory)
+        decoder_inputs_dict = dict( query_pos=query_pos, query=query, memory=memory)
         head_inputs_dict = dict()
         return decoder_inputs_dict, head_inputs_dict
 
@@ -214,6 +216,7 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
             query_pos=query_pos,
             key_pos=memory_pos,
             key_padding_mask=memory_mask)  # for cross_attn
+                                           # hidden_states.shape=(num_decoder_layers, bs, num_queries, dim)
 
         head_inputs_dict = dict(hidden_states=hidden_states)
         return head_inputs_dict

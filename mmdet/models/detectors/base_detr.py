@@ -1,5 +1,5 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod             # 추상화. 자식클래스가 부모클래스 함수 override하는 feel
 from typing import Dict, List, Tuple, Union
 
 from torch import Tensor
@@ -131,7 +131,7 @@ class DetectionTransformer(BaseDetector, metaclass=ABCMeta):
             - bboxes (Tensor): Has a shape (num_instances, 4),
               the last dimension 4 arrange as (x1, y1, x2, y2).
         """
-        img_feats = self.extract_feat(batch_inputs)
+        img_feats = self.extract_feat(batch_inputs)                         # 여기서 input이 backbone을 통과한다.
         head_inputs_dict = self.forward_transformer(img_feats,
                                                     batch_data_samples)
         results_list = self.bbox_head.predict(
@@ -213,12 +213,12 @@ class DetectionTransformer(BaseDetector, metaclass=ABCMeta):
             includes the `hidden_states` of the decoder output and may contain
             `references` including the initial and intermediate references.
         """
-        encoder_inputs_dict, decoder_inputs_dict = self.pre_transformer(
-            img_feats, batch_data_samples)
+        encoder_inputs_dict, decoder_inputs_dict = self.pre_transformer(        # self.pre_transformer()에 backbone을 거친 img_feats.shape = (batch_size, feat_dim, fmap_h, fmap_w) 
+            img_feats, batch_data_samples)                                      # 와 batch_data_samples 를 인자로 넘기면, img_feats.shape=(batch_size, HW, feat_dim) 으로 encoder input꼴로 바꿔준다.
 
-        encoder_outputs_dict = self.forward_encoder(**encoder_inputs_dict)
+        encoder_outputs_dict = self.forward_encoder(**encoder_inputs_dict)      # encoder_inputs_dict의 dict()꼴을 인자로 넘길 때 **을 쓰기!
 
-        tmp_dec_in, head_inputs_dict = self.pre_decoder(**encoder_outputs_dict)
+        tmp_dec_in, head_inputs_dict = self.pre_decoder(**encoder_outputs_dict) # decoder의 input으로 들어가는 object query를 준비하는 과정
         decoder_inputs_dict.update(tmp_dec_in)
 
         decoder_outputs_dict = self.forward_decoder(**decoder_inputs_dict)
@@ -235,10 +235,12 @@ class DetectionTransformer(BaseDetector, metaclass=ABCMeta):
             tuple[Tensor]: Tuple of feature maps from neck. Each feature map
             has shape (bs, dim, H, W).
         """
-        x = self.backbone(batch_inputs)
-        if self.with_neck:
-            x = self.neck(x)
-        return x
+        breakpoint()
+        
+        x = self.backbone(batch_inputs)         # self는 현재 model이고, self.backbone은 즉 model.backbone 과 동일.
+        if self.with_neck:                      # 즉 먼저 backbone에 input을 넣어서 feature을 extract해준 것! 맞네 x.shape = (4,2048,26,27) 이다. channel=2048 이므로
+            x = self.neck(x)                    # backbone을 잘 통과 O
+        return x                                # neck을 통해서 channel=2048 -> 256 으로 바꿔주었다. x.shape = (4,256,26,27)
 
     @abstractmethod
     def pre_transformer(
