@@ -11,6 +11,10 @@ from ..layers import (DetrSparseTransformerDecoder, DetrSparseTransformerEncoder
                       SinePositionalEncoding)
 from .base_detr import DetectionTransformer
 
+# lets add reformer models
+from reformer_pytorch.reformer_pytorch import *
+
+
 
 @MODELS.register_module()
 class DETR_SPARSE(DetectionTransformer):        # my efficient detr 
@@ -26,11 +30,14 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
     def _init_layers(self) -> None:
         """Initialize layers except for backbone, neck and bbox_head."""
         # breakpoint()
+        
         self.positional_encoding = SinePositionalEncoding(
-            **self.positional_encoding)
-        self.encoder = DetrSparseTransformerEncoder(**self.encoder)
+            **self.positional_encoding)     
+        self.encoder = DetrSparseTransformerEncoder(**self.encoder)     
         self.decoder = DetrSparseTransformerDecoder(**self.decoder)
-        self.embed_dims = self.encoder.embed_dims
+        self.embed_dims = self.encoder.embed_dims    
+        
+        
         # NOTE The embed_dims is typically passed from the inside out.
         # For example in DETR, The embed_dims is passed as
         # self_attn -> the first encoder layer 
@@ -81,7 +88,7 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
               and 'memory_pos'.
         """
 
-        breakpoint()
+        # breakpoint()
         feat = img_feats[-1]  # NOTE img_feats contains only one feature.       # feat.shape = (batch_size, feat_dim, fmap_h, fmap_w)
         batch_size, feat_dim, _, _ = feat.shape
         # construct binary masks which for the transformer.
@@ -97,7 +104,7 @@ class DETR_SPARSE(DetectionTransformer):        # my efficient detr
         # NOTE following the official DETR repo, non-zero values represent
         # ignored positions, while zero values mean valid positions.        # 에 의하면 0 이 valid position을 의미한다고 하네! 
                                                                             # masks.shape = (batch_size, (batch_input_shape) )
-        breakpoint()
+        # breakpoint()
         masks = F.interpolate(                                              # 이걸 거치면 masks.shape = (batch_size, fmap_h, fmap_w )
             masks.unsqueeze(1), size=feat.shape[-2:]).to(torch.bool).squeeze(1)
         # [batch_size, embed_dim, h, w]

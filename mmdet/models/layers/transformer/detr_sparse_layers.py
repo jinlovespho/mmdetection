@@ -3,15 +3,12 @@ from typing import Union
 
 import torch
 from mmcv.cnn import build_norm_layer
-from mmcv.cnn.bricks.transformer import FFN, MultiheadAttention
+from mmcv.cnn.bricks.transformer import FFN, Reformer_MultiheadAttention        # Reformer MHA 추가
 from mmengine import ConfigDict
 from mmengine.model import BaseModule, ModuleList
 from torch import Tensor
 
 from mmdet.utils import ConfigType, OptConfigType
-
-# JINLOVESPHO my detr sparse transformer !! lets implement! 
-from reformer_pytorch import *
 
 
 class DetrSparseTransformerEncoder(BaseModule):
@@ -169,7 +166,7 @@ class DetrSparseTransformerEncoderLayer(BaseModule):
                  init_cfg: OptConfigType = None) -> None:
 
         super().__init__(init_cfg=init_cfg)
-
+        
         self.self_attn_cfg = self_attn_cfg
         if 'batch_first' not in self.self_attn_cfg:
             self.self_attn_cfg['batch_first'] = True
@@ -177,17 +174,19 @@ class DetrSparseTransformerEncoderLayer(BaseModule):
             assert self.self_attn_cfg['batch_first'] is True, 'First \
             dimension of all DETRs in mmdet is `batch`, \
             please set `batch_first` flag.'
-
+        
         self.ffn_cfg = ffn_cfg
         self.norm_cfg = norm_cfg
+        self.self_attn_cfg=self_attn_cfg
         self._init_layers()
 
     def _init_layers(self) -> None:
         """Initialize self-attention, FFN, and normalization."""
         # breakpoint()
-        self.self_attn = MultiheadAttention(**self.self_attn_cfg)       
-        self.embed_dims = self.self_attn.embed_dims
-        self.ffn = FFN(**self.ffn_cfg)
+        self.self_attn = Reformer_MultiheadAttention(**self.self_attn_cfg)       # 이게 self.이라는 모델에 MultiheadAttention이라는 layer을 self_attn 이름으로 추가하는 것      
+        self.embed_dims = self.self_attn.embed_dims                     
+
+        self.ffn = FFN(**self.ffn_cfg)                                  # self.이라는 모델에 FFN layer을 self.ffn으로 추가하는 것
         norms_list = [
             build_norm_layer(self.norm_cfg, self.embed_dims)[1]
             for _ in range(2)
@@ -213,7 +212,7 @@ class DetrSparseTransformerEncoderLayer(BaseModule):
         # breakpoint()
         
         query = self.self_attn(                     # self.self_attn은 MultiHeadAttention()이다.
-            query=query,
+            query=query,                            # 여기에 query, key, value 다 동일하게 query를 넣어준다. 즉 self attention을 계산하는 부분임!
             key=query,
             value=query,
             query_pos=query_pos,
@@ -288,8 +287,8 @@ class DetrSparseTransformerDecoderLayer(BaseModule):
 
     def _init_layers(self) -> None:
         """Initialize self-attention, FFN, and normalization."""
-        self.self_attn = MultiheadAttention(**self.self_attn_cfg)
-        self.cross_attn = MultiheadAttention(**self.cross_attn_cfg)
+        self.self_attn = Reformer_MultiheadAttention(**self.self_attn_cfg)
+        self.cross_attn = Reformer_MultiheadAttention(**self.cross_attn_cfg)
         self.embed_dims = self.self_attn.embed_dims
         self.ffn = FFN(**self.ffn_cfg)
         norms_list = [
@@ -349,6 +348,7 @@ class DetrSparseTransformerDecoderLayer(BaseModule):
             attn_mask=self_attn_mask,
             **kwargs)
         query = self.norms[0](query)
+                
         query = self.cross_attn(            # encoder layer과 다르게 decoder layer에는 cross_attn이 하나 추가 되어 있다.
             query=query,
             key=key,

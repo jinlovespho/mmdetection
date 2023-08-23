@@ -235,7 +235,7 @@ class DetectionTransformer(BaseDetector, metaclass=ABCMeta):
             tuple[Tensor]: Tuple of feature maps from neck. Each feature map
             has shape (bs, dim, H, W).
         """
-        breakpoint()
+        # breakpoint()
         
         x = self.backbone(batch_inputs)         # self는 현재 model이고, self.backbone은 즉 model.backbone 과 동일.
         if self.with_neck:                      # 즉 먼저 backbone에 input을 넣어서 feature을 extract해준 것! 맞네 x.shape = (4,2048,26,27) 이다. channel=2048 이므로
